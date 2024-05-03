@@ -1,6 +1,8 @@
 import { useEffect } from "react"
 import { useOutletContext } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
+import { Button } from "../../ui/Button"
 
 const HomeConatiner = styled.div`
   margin-right: auto;
@@ -30,6 +32,7 @@ const P = styled.p`
   color: #a1a1a2;
   font-size: 20px;
   margin-top: 30px;
+  margin-bottom: 30px;
 
   @media (max-width: 500px) {
     font-size: 13px;
@@ -39,6 +42,11 @@ const P = styled.p`
 export default function Home() {
 
   const [ setBackgroundImage ] = useOutletContext()
+  const navigate = useNavigate()
+
+  function handleNavigation() {
+    navigate('/login')
+  }
 
   useEffect(() => {
     setBackgroundImage(true)
@@ -49,6 +57,7 @@ export default function Home() {
     <H1>You travel the world.
     WorldWise keeps track of your adventures.</H1>
     <P>A world map that tracks your footsteps into every city you can think of. Never forget your wonderful experiences, and show your friends how you have wandered the world.</P>
+    <Button onClick={() => handleNavigation()}>start tracking now</Button>
     </HomeConatiner>
   )
 }
