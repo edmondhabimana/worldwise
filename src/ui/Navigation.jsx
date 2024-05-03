@@ -19,15 +19,16 @@ const Logo = styled.img`
 const NavContainer = styled.div`
   padding: 30px 50px;
   position: relative;
+  /* background-color: red; */
 
   display: flex;
-  justify-content: space-between;
   align-items: center;
 
   @media (max-width: 2560px) {
     max-width: 1440px;
     margin-right: auto;
     margin-left: auto;
+
   }
 
   @media (max-width: 380px) {
@@ -40,6 +41,8 @@ const Nav = styled.div`
   text-transform: uppercase;
   font-weight: 500;
   font-size: 15px;
+  position: absolute;
+  right: 80px;
 
   display: flex;
   align-items: center;
