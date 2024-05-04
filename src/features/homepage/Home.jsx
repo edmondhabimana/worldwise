@@ -16,9 +16,9 @@ const HomeConatiner = styled.div`
   }
 `
 const H1 = styled.h1`
-  color: #ececec;
+  color: var(--title-white-color);
   font-size: 45px;
-  font-weight: 600;
+  font-weight: 700;
 
   @media (max-width: 500px) {
     font-size: 35px;
@@ -29,10 +29,11 @@ const H1 = styled.h1`
   }
 `
 const P = styled.p`
-  color: #a1a1a2;
+  color: var(--paragraph-white-color);
   font-size: 20px;
   margin-top: 30px;
   margin-bottom: 30px;
+  font-weight: 700;
 
   @media (max-width: 500px) {
     font-size: 13px;

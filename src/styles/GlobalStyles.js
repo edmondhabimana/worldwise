@@ -4,6 +4,8 @@ const GlobalStyles = createGlobalStyle `
 
   :root {
     --green-color: #06c169;
+    --title-white-color: #ececec;
+    --paragraph-white-color: #a1a1a2;
   }
 
   * {

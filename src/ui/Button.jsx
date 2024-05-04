@@ -7,5 +7,6 @@ export const Button = styled.button`
   border-radius: 8px;
   font-size: 15px;
   text-transform: uppercase;
+  color: black;
   cursor: pointer;
 `

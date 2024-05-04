@@ -9,8 +9,7 @@ const backgrounds = {
     background-position: center;
     background-size: cover;
     background-image: url(${image});
-    width: 100vw;
-    height: 100vh;
+    height: 94vh;
   `,
   backgroundNoImage: css`
     background-color: #2d3438;
@@ -18,13 +17,16 @@ const backgrounds = {
 }
 
 const Container = styled.div`
+  margin-top: 25px;
+  margin-left: 25px;
+  margin-right: 25px;
   ${(props) => backgrounds[props.background]}
 `
 
 const Overlay = styled.div`
   background-color: #2d3438d0;
   width: 100%;
-  height: 100vh;
+  height: 100%;
 `
 
 export default function AppLayout() {
