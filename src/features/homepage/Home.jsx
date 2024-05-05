@@ -10,6 +10,11 @@ const HomeConatiner = styled.div`
   text-align: center;
   margin-top: 100px;
   padding: 10px 50px;
+  height: 100% ;
+  /* display: flex; */
+  /* align-self: stretch; */
+  /* position: relative; */
+  /* background-color: red; */
 
   @media (max-width: 2560px) {
     max-width: 1440px;

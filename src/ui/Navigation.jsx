@@ -12,7 +12,7 @@ const Logo = styled.img`
   width: 220px;
   cursor: pointer;
 
-  @media (max-width: 380px) {
+  @media (max-width: 425px) {
     width: 180px;
   }
 `
@@ -32,7 +32,7 @@ const NavContainer = styled.div`
   }
 
   @media (max-width: 380px) {
-    padding: 15px 25px;
+    padding: 30px 15px;
   }
 `
 
@@ -75,8 +75,8 @@ const MobileMenu = styled.div`
     display: block;
     position: absolute;
     font-size: 15px;
-    top: 90px;
-    right: 20px;
+    top: 115px;
+    right: 50px;
     background-color: #ffffff;
     color: black;
     padding: 30px;
@@ -101,9 +101,9 @@ const Overlay = styled.div`
 
 const MobileMenuIcon = styled(FontAwesomeIcon)`
   font-size: 40px;
-  position: absolute;
-  top: 38px;
-  right: 20px;
+  position: fixed;
+  top: 60px;
+  right: 50px;
   z-index: 3;
 
   @media (max-width: 2560px) {
@@ -114,8 +114,8 @@ const MobileMenuIcon = styled(FontAwesomeIcon)`
     display: block;
   }
 
-  @media (max-width: 380px) {
-    top: 23px;
+  @media (max-width: 425px) {
+    top: 64px;
     font-size: 30px;
   }
 `
