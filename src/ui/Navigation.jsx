@@ -20,6 +20,7 @@ const NavContainer = styled.div`
   padding: 30px 50px;
   position: relative;
   /* background-color: red; */
+  /* z-index: 100; */
 
   display: flex;
   align-items: center;
@@ -162,7 +163,7 @@ export default function Navigation() {
           </div>
         }
         {isMenuOpen &&
-          <Overlay>
+          <Overlay >
             <MobileMenu>
               <CustomNavLink 
                 to={'/pricing'}

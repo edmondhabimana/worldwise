@@ -11,6 +11,8 @@ const HomeConatiner = styled.div`
   margin-top: 100px;
   padding: 10px 50px;
   height: 100% ;
+  z-index: 1;
+  position: relative;
   /* display: flex; */
   /* align-self: stretch; */
   /* position: relative; */

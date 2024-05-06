@@ -8,6 +8,8 @@ const Container = styled.div`
   max-width: 1440px;
   margin-left: auto;
   margin-right: auto;
+  position: relative;
+  z-index: 1;
   /* background-color: #2d3438;
   margin-bottom: 25px; */
 
