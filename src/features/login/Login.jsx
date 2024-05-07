@@ -2,6 +2,9 @@ import { useEffect } from "react"
 import { useOutletContext } from "react-router-dom"
 import { Button } from "../../ui/Button"
 import styled from "styled-components"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faGoogle } from "@fortawesome/free-brands-svg-icons"
+import { createUserDocumentFromAuth, signInWithGooglePopup } from "../../firebase/config"
 
 const LoginContainer = styled.div`
   width: 38%;
@@ -33,13 +36,20 @@ const Input = styled.input`
   padding-left: 5px;
   border: none;
 `
-const LoginButton = styled(Button)`
-  align-self: flex-start;
+const GoogleButton = styled(Button)`
+  display: flex;
+  gap: 8px;
+  justify-content: center;
 `
 
 export default function Login() {
 
   const [ setBackgroundImage ] = useOutletContext()
+
+  const logGoogleUser = async () => {
+    const { user } = await signInWithGooglePopup()
+    createUserDocumentFromAuth(user)
+  }
 
   useEffect(() => {
     setBackgroundImage(false)
@@ -55,7 +65,11 @@ export default function Login() {
         <span>Password</span>
         <Input type="text" />
       </Label>
-      <LoginButton>login</LoginButton>
+      <Button>login</Button>
+      <GoogleButton onClick={logGoogleUser}>
+        <FontAwesomeIcon icon={faGoogle} />
+        Sign in with Google
+      </GoogleButton>
     </LoginContainer>
   )
 }
