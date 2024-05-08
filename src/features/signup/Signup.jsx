@@ -2,10 +2,10 @@ import { Form } from "../../ui/Form"
 import { Label } from "../../ui/Label"
 import { Input } from "../../ui/Input"
 import { Button } from "../../ui/Button"
+import { Error } from "../../ui/Error"
 import { createAuthUserWithEmailAndPassword, 
          createUserDocumentFromAuth } from "../../firebase/config" 
 import { useState } from "react"
-import styled from "styled-components"
 
 const defaultFormFields = {
   displayName: '',
@@ -15,11 +15,6 @@ const defaultFormFields = {
 }
 
 const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
-const Error = styled.p`
-  color: red;
-  font-size: 13px;
-`
 
 export default function Signup() {
   const [formField, setFormFields] = useState(defaultFormFields)
