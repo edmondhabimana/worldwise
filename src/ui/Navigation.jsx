@@ -76,8 +76,8 @@ const MobileMenu = styled.div`
     display: block;
     position: absolute;
     font-size: 15px;
-    top: 115px;
-    right: 50px;
+    top: 100px;
+    right: 25px;
     background-color: #ffffff;
     color: black;
     padding: 30px;
@@ -92,12 +92,22 @@ const MobileMenu = styled.div`
 
 const Overlay = styled.div`
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
+  top: 25px;
+  left: 25px;
+  right: 50px;
+  width: calc(100% - 50px);
+  height: calc(100vh - 50px);
   background-color: #799db249;
   backdrop-filter: blur(4px);
+  z-index: 2;
+
+  @media (max-width: 2560px) {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    display: block;
+  }
 `
 
 const MobileMenuIcon = styled(FontAwesomeIcon)`

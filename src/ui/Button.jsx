@@ -9,4 +9,13 @@ export const Button = styled.button`
   text-transform: uppercase;
   color: black;
   cursor: pointer;
+
+  @media (max-width: 381px) {
+    font-size: 12px;
+  }
+
+  @media (max-width: 330px) {
+    font-size: 10px;
+    padding: 6px 20px;
+  }
 `

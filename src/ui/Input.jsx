@@ -6,4 +6,9 @@ export const Input = styled.input`
   font-size: 16px;
   padding-left: 5px;
   border: none;
+
+  @media (max-width: 381px) {
+    font-size: 12px;
+    height: 28px;
+  }
 `
