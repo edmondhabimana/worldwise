@@ -6,6 +6,7 @@ import Home from './features/homepage/Home'
 import Pricing from './features/pricing/Pricing'
 import Product from './features/product/Product'
 import Login from './features/login/Login'
+import WorldWiseApp from './features/app/WorldWiseApp'
 
 const router = createBrowserRouter([
   {
@@ -28,7 +29,11 @@ const router = createBrowserRouter([
         path: '/login',
         element: <Login/>
       }
-    ]
+    ],
+  },
+  {
+    path: '/app',
+    element: <WorldWiseApp/>
   }
 ])
 

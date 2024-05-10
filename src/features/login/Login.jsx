@@ -10,7 +10,7 @@ import Signup from "../signup/Signup"
 import styled from "styled-components"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faGoogle } from "@fortawesome/free-brands-svg-icons"
-import { faArrowRightLong } from "@fortawesome/pro-light-svg-icons"
+import { faArrowRightLong, faSpinner } from "@fortawesome/pro-light-svg-icons"
 import { createUserDocumentFromAuth, 
          signInWithGooglePopup,
          signInAuthUserWithEmailAndPassword } from "../../firebase/config"
@@ -77,6 +77,8 @@ export default function Login() {
   const [formFields, setFormFields] = useState(defaultFormFields);
   const [ emailPasswordError, setEmailPasswordError ] = useState('')
   const [ showForm, setShowForm ] = useState(false)
+  const [ loginPending, setLoginPending ] = useState(false)
+  const [ googleLoginPending, setGoogleLoginPending ] = useState(false)
   const { email, password } = formFields;
 
   const [ setBackgroundImage ] = useOutletContext()
@@ -88,15 +90,24 @@ export default function Login() {
   };
 
   const logGoogleUser = async () => {
+    setGoogleLoginPending(true)
     const { user } = await signInWithGooglePopup()
+    setGoogleLoginPending(false)
     createUserDocumentFromAuth(user)
   }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if(!email || !password) {
+      setEmailPasswordError('Invalid email/password')
+      return
+    }
+    setLoginPending(true)
 
     try {
-      await signInAuthUserWithEmailAndPassword(email, password);
+     const user = await signInAuthUserWithEmailAndPassword(email, password);
+     setLoginPending(false)
+     console.log(user);
       resetFormFields();
     } catch (error) {
 
@@ -105,6 +116,7 @@ export default function Login() {
       }else {
         console.log('user sign in failed', error.message);
       }
+      setLoginPending(false)
     }
   };
 
@@ -151,12 +163,21 @@ export default function Login() {
               />
             </Label>
             <Div>
-              <Button>login</Button>
+              <Button>
+                {loginPending && <FontAwesomeIcon icon={faSpinner} spin />}
+                {!loginPending && 'login'}
+              </Button>
               <Error>{emailPasswordError}</Error>
             </Div>
-            <GoogleButton onClick={logGoogleUser}>
-              <FontAwesomeIcon icon={faGoogle} />
-              Sign in with Google
+            <GoogleButton 
+              onClick={(e) => {
+                e.preventDefault();
+                logGoogleUser();
+              }}
+            >
+              {googleLoginPending && <FontAwesomeIcon icon={faSpinner} spin />}
+              {!googleLoginPending && <FontAwesomeIcon icon={faGoogle} />}
+              {!googleLoginPending && 'Sign in with Google'}
             </GoogleButton>
           </Form>
       }

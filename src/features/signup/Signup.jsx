@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Form } from "../../ui/Form"
 import { Label } from "../../ui/Label"
 import { Input } from "../../ui/Input"
@@ -5,7 +6,8 @@ import { Button } from "../../ui/Button"
 import { Error } from "../../ui/Error"
 import { createAuthUserWithEmailAndPassword, 
          createUserDocumentFromAuth } from "../../firebase/config" 
-import { useState } from "react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faSpinner } from "@fortawesome/pro-light-svg-icons"
 
 const defaultFormFields = {
   displayName: '',
@@ -21,6 +23,7 @@ export default function Signup() {
   const [ passwordError, setPasswordError ] = useState('')
   const [ displayNameError, setDisplayNameError ] = useState('')
   const [ emailError, setEmailError ] = useState('')
+  const [ isPending, setIsPending ] = useState(false)
   const [ userExistError, setUserExistError ] = useState('')
   const { displayName, email, password, confirmPassword } = formField
   // console.log(displayName);
@@ -31,6 +34,7 @@ export default function Signup() {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
+    setIsPending(true)
 
     if(displayName === '') {
       setDisplayNameError('User name required')
@@ -69,6 +73,7 @@ export default function Signup() {
       );
 
       await createUserDocumentFromAuth(user, {displayName})
+      setIsPending(false)
       resetFormFields()
     } catch (error) {
       if(error.code === 'auth/email-already-in-use') {
@@ -78,6 +83,7 @@ export default function Signup() {
       }else {
         console.log('user creation encountered an error', error.message);
       }
+      setIsPending(false)
     }
 
     console.log('form was submitted');
@@ -139,7 +145,10 @@ export default function Signup() {
         />
         <Error>{passwordError}</Error>
       </Label>
-      <Button>sign up</Button>
+      <Button>
+        {isPending && <FontAwesomeIcon icon={faSpinner} spin />}
+        {!isPending && 'sign up'}
+      </Button>
       <Error>{userExistError}</Error>
     </Form>
   )
