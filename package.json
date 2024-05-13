@@ -24,6 +24,7 @@
     "@fortawesome/sharp-regular-svg-icons": "^6.5.2",
     "@fortawesome/sharp-solid-svg-icons": "^6.5.2",
     "@fortawesome/sharp-thin-svg-icons": "^6.5.2",
+    "@googlemaps/js-api-loader": "^1.16.6",
     "firebase": "^10.11.1",
     "leaflet": "^1.9.4",
     "react": "^18.2.0",
