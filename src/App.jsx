@@ -6,7 +6,11 @@ import Home from './features/homepage/Home'
 import Pricing from './features/pricing/Pricing'
 import Product from './features/product/Product'
 import Login from './features/login/Login'
-import WorldWiseApp from './features/app/WorldWiseApp'
+import WorldWiseApp from './features/map/WorldWiseApp'
+import Form, { loader as formLoader } from './features/form/FormComponent'
+// , { loader as formLoader }
+import CityList from './features/cities/CityList'
+import CountryList from './features/countries/CountryList'
 
 const router = createBrowserRouter([
   {
@@ -32,8 +36,22 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/app',
-    element: <WorldWiseApp/>
+    element: <WorldWiseApp/>,
+    children: [
+      {
+        path: '/app/cities',
+        element: <CityList/>
+      },
+      {
+        path: '/app/form/:lat/:lng',
+        element: <Form/>,
+        loader: formLoader
+      },
+      {
+        path: '/app/countries',
+        element: <CountryList/>
+      }
+    ]
   }
 ])
 
