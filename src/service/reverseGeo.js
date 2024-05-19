@@ -6,5 +6,16 @@ export const reverseGeo = async (_lat, _lng) => {
 
 
     const coordsInfo = await res.json()
-    return coordsInfo.results[1].formatted_address.split(',')
+    if(coordsInfo.results.length <= 4){
+      return "error"
+    } else {
+      const locationInfo = []
+
+      locationInfo.push(coordsInfo.results.at(-4).address_components[1].long_name);
+      locationInfo.push(coordsInfo.results.at(-1).address_components[0].long_name);
+      locationInfo.push(coordsInfo.results.at(-1).address_components[0].short_name);
+
+      return locationInfo
+    }
+
 }
