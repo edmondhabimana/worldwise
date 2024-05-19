@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-
 import {
   getAuth,
   signInWithPopup,
@@ -8,6 +7,7 @@ import {
   GoogleAuthProvider,
 } from 'firebase/auth'
 import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore'
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyA2vlHYWJPT2BGOej1kyYUK9AxQwII_nCc",
@@ -70,4 +70,14 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
   if(!email || !password) return
 
   return await signInWithEmailAndPassword(auth, email, password)
+}
+
+export const createCity = async (_city, _country, _countryShortName, _date, _description = '') => {
+  await setDoc(doc(db, "cities", `${_city}`), {
+    city: _city,
+    country: _country,
+    shortName: _countryShortName,
+    timeStamp: _date,
+    description: _description
+  })
 }

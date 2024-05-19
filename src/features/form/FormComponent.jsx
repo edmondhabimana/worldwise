@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { Form, useLoaderData, useNavigate } from "react-router-dom"
+import { Form, useLoaderData, useNavigate, useNavigation } from "react-router-dom"
 import styled from "styled-components";
-// import { useCities } from "../../contexts/citiesContext";
 import { reverseGeo } from "../../service/reverseGeo";
+import { createCity } from "../../firebase/config";
 import ReactDatePicker from "react-datepicker";
 import { Label } from "../../ui/Label";
 import { Input } from "../../ui/Input";
 import { Button } from "../../ui/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeftLong } from "@fortawesome/pro-regular-svg-icons";
+import { faSpinner } from "@fortawesome/pro-duotone-svg-icons";
 
 const ErrorDiv = styled.div`
   font-weight: 600;
@@ -89,18 +90,22 @@ const ArrowIcon = styled(FontAwesomeIcon)`
 `
 
 export default function FormComponent() {
-  const [ city, setCity ] = useState()
-  const [ country, setCountry ] = useState()
+  const [ city, setCity ] = useState('')
+  const [ country, setCountry ] = useState('')
   const [ error, setError ] = useState(null)
-  const [ countryAbbreviation, setCountryAbbreviation] = useState()
-  const [ startDate, setStartDate ] = useState()
+  const [ countryAbbreviation, setCountryAbbreviation] = useState('')
+  const [ startDate, setStartDate ] = useState(Date.now)
 
   const locationData = useLoaderData()
   const navigate = useNavigate()
+  const navigation = useNavigation()
+  const isSubmitting = navigation.state === 'submitting'
 
   function handleNavigation() {
     navigate('/app/cities')
   }
+
+
 
   useEffect(() => {
     if(locationData === "error"){
@@ -131,6 +136,7 @@ export default function FormComponent() {
             />
             <input type="hidden" name="country" value={country}/>
             <FlagImage src={`https://flagsapi.com/${countryAbbreviation}/shiny/64.png`} />
+            <input type="hidden" name="countryAbbreviation" value={countryAbbreviation}/>
           </CityNameContainer>
           <DateContainer>
             <FormLabel>When did you go to {city}?</FormLabel>
@@ -142,7 +148,12 @@ export default function FormComponent() {
             <TextArea type="text" name="description"/>
           </div>
           <ButtonContainer>
-            <Button>add</Button>
+            <Button>
+              {isSubmitting ? 
+                <FontAwesomeIcon icon={faSpinner} spin /> :
+                'add'
+              }
+            </Button>
             <BackButton
               onClick={(e) => {
                 e.preventDefault();
@@ -170,7 +181,13 @@ export async function loader({params}) {
 
 export async function action({request}) {
   const formData = await request.formData()
-  const data = Object.fromEntries(formData)
-  console.log(data);
+  const { city, 
+          country, 
+          countryAbbreviation, 
+          date, 
+          description
+        } = Object.fromEntries(formData)
+  await createCity(city, country, countryAbbreviation, date, description)
+  // console.log(data);
   return null
 }

@@ -7,7 +7,6 @@ import ChangeMapPosition from "./ChangeMapPosition"
 import userLocation  from "../../hooks/userLocation"
 import DetectClick from "./DetectClick"
 import logo from '../../assets/logo.png'
-import Image from "../../ui/Image"
 
 const WorldWiseAppContainer = styled.div`
   height: 100vh;
@@ -21,7 +20,6 @@ const DivWithMap = styled.div`
   height: 100%;
   background-color: red;
   position: relative;
-  /* z-index: 3; */
   width: 50%;
 `
 const Map = styled(MapContainer)`
@@ -89,7 +87,8 @@ export default function WorldWiseApp() {
   const [ coord, setCoord ] = useState([51.481383, -0.131836])
   const [ year, setYear ] = useState('')
   const { handleLocation, isLoading, myPosition} = userLocation()
-  console.log('my position', myPosition);
+  
+
 
   useEffect(function() {
     myPosition  ?
