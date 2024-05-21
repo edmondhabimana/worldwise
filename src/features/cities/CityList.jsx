@@ -1,35 +1,35 @@
-import { useLoaderData } from "react-router-dom"
-import { getCities } from "../../firebase/config"
 import CityItem from "./CityItem";
 import styled from "styled-components";
+import { useCities } from "../../contexts/citiesContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/pro-duotone-svg-icons";
 
 const Div = styled.div`
-  /* background-color: red; */
-  
   width: 100%;
   overflow: scroll;
   margin-bottom: 50px;
   scrollbar-color: #2d3438 #2d3438;
-
-  /* &.scroller {
-    scrollbar-color: red;
-  } */
+`
+const LoadingIcon = styled(FontAwesomeIcon)`
+  font-size: 40px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 100px;
 `
 
 export default function CityList() {
-  const cities = useLoaderData()
-  // console.log(cities);
+  const { cities, isLoading } = useCities()
 
   return(
     <Div>
-      {cities.map((city, index) => (
-        <CityItem city={city} key={index}/>
-      ))}
+      {isLoading ? 
+        <LoadingIcon icon={faSpinner} spin /> : 
+        cities.map((city, index) => (
+          <CityItem city={city} key={index}/>
+        ))
+      }
     </Div>
   )
 }
 
-export async function loader() {
-  const cities = await getCities()
-  return cities
-}

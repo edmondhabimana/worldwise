@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { deleteCity } from "../../firebase/config"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faX } from "@fortawesome/free-solid-svg-icons"
 import { useEffect, useState } from "react"
@@ -37,7 +38,7 @@ const XIcon = styled(FontAwesomeIcon)`
 
 export default function CityItem ({city}) {
   const [ newTimestamp, setNewTimestamp ] = useState('')
-  console.log(city);
+  // console.log(city);
   const { city: cityName, countryShortName, tripDate } = city
 
   useEffect(() => {
@@ -59,7 +60,7 @@ export default function CityItem ({city}) {
       </SubContainer>
       <SubContainer>
         <PDate>({newTimestamp})</PDate>
-        <XIcon icon={faX} />
+        <XIcon icon={faX} onClick={() => deleteCity(cityName)}/>
       </SubContainer>
     </CityContainer>
   )

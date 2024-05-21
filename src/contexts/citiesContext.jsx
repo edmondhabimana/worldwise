@@ -1,9 +1,17 @@
-import { createContext, useReducer, useContext } from "react";
+import { createContext, 
+         useReducer, 
+         useContext, 
+         useEffect } from "react";
+import { query, 
+         collection, 
+         orderBy, 
+         onSnapshot } from "firebase/firestore";
+import { db } from "../firebase/config";
 
 const CitiesContext = createContext()
 
 const initialState = {
-  cityAndCountry: [],
+  cities: [],
   isLoading: [],
   error: ''
 }
@@ -13,8 +21,8 @@ function reducer(state, action) {
     case 'loading':
       return { ...state, isLoading: true}
     
-    case "cityAndCountry/loaded":
-      return {...state, isLoading: false, cityAndCountry:action.payload}
+    case "cities/loaded":
+      return {...state, isLoading: false, cities: action.payload}
 
     default: 
       throw new Error("Unknown action type")
@@ -22,17 +30,37 @@ function reducer(state, action) {
 }
 
 function CitiesProvider({children}) {
-  const [{ cityAndCountry, isLoading, error }, dispatch] = useReducer(
+  const [{ cities, isLoading, error }, dispatch] = useReducer(
     reducer,
     initialState
   )
 
+  // console.log('cities',cities);
 
+  useEffect(() => {
+    const getCities = async () => {
+      dispatch({type: "loading"})
+
+      const q = query(collection(db, 'cities'), orderBy('createdAt', 'desc'))
+    
+      onSnapshot(q, (querySnapshot) => {
+        const getCities = []
+        querySnapshot.forEach((doc) => {
+          // console.log(doc.data());
+          getCities.push({...doc.data()})
+        })
+        dispatch({ type: "cities/loaded", payload: getCities})
+      })
+    
+    }
+
+    getCities()
+  }, [])
 
   return(
     <CitiesContext.Provider
       value={{
-        cityAndCountry,
+        cities,
         isLoading,
         error,
       }}
