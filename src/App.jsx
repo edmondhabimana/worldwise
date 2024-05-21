@@ -9,8 +9,7 @@ import Login from './features/login/Login'
 import WorldWiseApp from './features/map/WorldWiseApp'
 import Form, { loader as formLoader } from './features/form/FormComponent'
 import {action as addCity } from './features/form/FormComponent'
-// , { loader as formLoader }
-import CityList from './features/cities/CityList'
+import CityList, {loader as citiesLoader} from './features/cities/CityList'
 import CountryList from './features/countries/CountryList'
 
 const router = createBrowserRouter([
@@ -41,7 +40,8 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/app/cities',
-        element: <CityList/>
+        element: <CityList/>,
+        loader: citiesLoader
       },
       {
         path: '/app/form/:lat/:lng',

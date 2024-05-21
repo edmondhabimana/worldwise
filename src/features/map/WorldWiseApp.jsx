@@ -74,13 +74,11 @@ const CustomNav = styled(NavLink)`
   }
 `
 const Copyright = styled.div`
-  padding-top: 10px;
-  padding-bottom: 20px;
+  padding-bottom: 10px;
   color: #9a9b9d;
   font-size: 13px;
   position: fixed;
   bottom: 30px;
-  background-color: #2d3438;
 `
 
 export default function WorldWiseApp() {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, useLoaderData, useNavigate, useNavigation } from "react-router-dom"
+import { Form, redirect, useLoaderData, useNavigate, useNavigation } from "react-router-dom"
 import styled from "styled-components";
 import { reverseGeo } from "../../service/reverseGeo";
 import { createCity } from "../../firebase/config";
@@ -36,6 +36,11 @@ const FormInput = styled(Input)`
     outline: none;
   }
 `
+const FlagImage = styled.img`
+  width: 40px;
+  position: absolute;
+  right: 10px;
+`
 const DatePicker = styled(ReactDatePicker)`
   height: 38px;
   border-radius: 5px;
@@ -54,11 +59,6 @@ const DatePicker = styled(ReactDatePicker)`
 const CityNameContainer = styled.div`
   position: relative;
   /* background-color: red; */
-`
-const FlagImage = styled.img`
-  width: 40px;
-  position: absolute;
-  right: 10px;
 `
 const DateContainer = styled.div`
   display: flex;
@@ -97,6 +97,7 @@ export default function FormComponent() {
   const [ startDate, setStartDate ] = useState(Date.now)
 
   const locationData = useLoaderData()
+  // console.log('location data',locationData);
   const navigate = useNavigate()
   const navigation = useNavigation()
   const isSubmitting = navigation.state === 'submitting'
@@ -104,8 +105,6 @@ export default function FormComponent() {
   function handleNavigation() {
     navigate('/app/cities')
   }
-
-
 
   useEffect(() => {
     if(locationData === "error"){
@@ -131,6 +130,7 @@ export default function FormComponent() {
             <FormInput 
               type="text" 
               name="city" 
+              // value={city}
               defaultValue={city}
               required
             />
@@ -189,5 +189,5 @@ export async function action({request}) {
         } = Object.fromEntries(formData)
   await createCity(city, country, countryAbbreviation, date, description)
   // console.log(data);
-  return null
+  return redirect('/app/cities')
 }

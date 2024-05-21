@@ -6,7 +6,7 @@ import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
 } from 'firebase/auth'
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore'
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, Timestamp, orderBy, query, where } from 'firebase/firestore'
 
 
 const firebaseConfig = {
@@ -72,12 +72,25 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
   return await signInWithEmailAndPassword(auth, email, password)
 }
 
-export const createCity = async (_city, _country, _countryShortName, _date, _description = '') => {
-  await setDoc(doc(db, "cities", `${_city}`), {
-    city: _city,
-    country: _country,
-    shortName: _countryShortName,
-    timeStamp: _date,
-    description: _description
+export const createCity = async (city, country, countryShortName, date, description = '') => {
+  const createdAt = Timestamp.fromDate(new Date())
+  await setDoc(doc(db, "cities", `${city}`), {
+    city,
+    country,
+    countryShortName,
+    tripDate: date,
+    description,
+    createdAt
   })
+}
+
+export const getCities = async () => {
+  const q = query(collection(db, 'cities'), orderBy('createdAt', 'desc'))
+  const querySnapshot = await getDocs(q)
+  const cities = []
+  querySnapshot.forEach((doc) => {
+    cities.push(doc.data())
+  })
+
+  return cities
 }
