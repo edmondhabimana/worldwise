@@ -123,6 +123,15 @@ export const getCountries = async () => {
   return uniqueCountries
 }
 
+export const getCurrentCity = async (id) => {
+  const docRef = doc(db, "cities", id)
+  const docSnap = await getDoc(docRef)
+
+  if(docSnap.exists()) {
+    return docSnap.data()
+  }
+}
+
 export const deleteCity = async (id) => {
   await deleteDoc(doc(db, 'cities', `${id}`))
 }

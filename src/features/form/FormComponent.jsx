@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { reverseGeo } from "../../service/reverseGeo";
 import { createCity } from "../../firebase/config";
 import ReactDatePicker from "react-datepicker";
+import BackButton from "../../ui/BackButton";
 import { Label } from "../../ui/Label";
 import { Input } from "../../ui/Input";
 import { Button } from "../../ui/Button";
@@ -79,11 +80,6 @@ const TextArea = styled.textarea`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
-`
-const BackButton = styled(Button)`
-  background-color: #42484c;
-  color: white;
-  border: 1px solid white;
 `
 const ArrowIcon = styled(FontAwesomeIcon)`
   margin-right: 5px;
