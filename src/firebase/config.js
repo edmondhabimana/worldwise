@@ -96,10 +96,31 @@ export const getCountries = async () => {
   const querySnapshot = await getDocs(collection(db, "cities"))
   const countries = []
   querySnapshot.forEach((doc) => {
-    countries.push(doc.data().country)
+    // console.log(doc.data());
+    countries.push([doc.data().country, doc.data().countryShortName])
   })
-  const uniqueCountries = new Set(countries)
-  return [...uniqueCountries]
+
+  const uniqueCountries = []
+  let count = 0
+  let start = false
+  //here we are able to get the unique values that we want
+  for (let j = 0; j < countries.length; j++) {
+    for (let k = 0; k < uniqueCountries.length; k++) {
+      if(`${countries[j][0]}${countries[j][1]}` === `${uniqueCountries[k][0]}${uniqueCountries[k][1]}`) {
+        start = true
+      }
+    }
+
+    count++
+    if(count === 1 && start === false) {
+      uniqueCountries.push(countries[j])
+    }
+    start = false
+    count = 0
+  }
+
+  console.log('uniqueCountries', uniqueCountries);
+  return uniqueCountries
 }
 
 export const deleteCity = async (id) => {
