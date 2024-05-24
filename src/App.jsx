@@ -11,6 +11,10 @@ import Form, { loader as formLoader } from './features/form/FormComponent'
 import {action as addCity } from './features/form/FormComponent'
 import CityList from './features/cities/CityList'
 import CountryList, {loader as countriesLoader} from './features/countries/CountryList'
+import City, {loader as currentCityLoader} from './features/cities/City'
+import SelectByCountry from './features/cities/SelectByCountry'
+import Error from './features/error/Error'
+
 
 const router = createBrowserRouter([
   {
@@ -37,21 +41,35 @@ const router = createBrowserRouter([
   },
   {
     element: <WorldWiseApp/>,
+    errorElement: <Error/>,
+
     children: [
       {
         path: '/app/cities',
         element: <CityList/>,
       },
       {
+        path: '/app/cities/:id',
+        element: <City/>,
+        loader: currentCityLoader,
+        errorElement: <Error/>
+      },
+      {
         path: '/app/form/:lat/:lng',
         element: <Form/>,
         loader: formLoader,
-        action: addCity
+        action: addCity,
+        errorElement: <Error/>
       },
       {
         path: '/app/countries',
         element: <CountryList/>,
-        loader: countriesLoader
+        loader: countriesLoader,
+        errorElement: <Error/>
+      },
+      {
+        path: '/app/countries/cities',
+        element: <SelectByCountry/>
       }
     ]
   }

@@ -1,9 +1,20 @@
+import { useEffect, useState } from "react"
+import { NavLink } from "react-router-dom"
 import styled from "styled-components"
 import { deleteCity } from "../../firebase/config"
+import FlagImage from "../../ui/FlagImage"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faX } from "@fortawesome/free-solid-svg-icons"
-import { useEffect, useState } from "react"
 
+const CustomNavLink = styled(NavLink)`
+  text-decoration: none;
+  color: white;
+
+  &.active {
+    border: 1px solid #00a200;
+    color: #00a200;
+  }
+`
 const CityContainer = styled.div`
   background-color: #42484c;
   margin-bottom: 15px;
@@ -21,9 +32,6 @@ const SubContainer = styled.div`
   display: flex;
   gap: 10px;
   align-items: center;
-`
-const FlagImage = styled.img`
-  width: 25px;
 `
 const PDate = styled.p`
   font-size: 14px;
@@ -53,15 +61,18 @@ export default function CityItem ({city}) {
 
   }, [tripDate])
   return(
-    <CityContainer>
-      <SubContainer>
-        <FlagImage src={`https://flagsapi.com/${countryShortName}/shiny/64.png`} />
-        <p>{cityName}</p>
-      </SubContainer>
-      <SubContainer>
-        <PDate>({newTimestamp})</PDate>
-        <XIcon icon={faX} onClick={() => deleteCity(cityName)}/>
-      </SubContainer>
-    </CityContainer>
+    <CustomNavLink to={`${cityName}`}>
+      <CityContainer>
+        <SubContainer>
+          <FlagImage src={`https://flagsapi.com/${countryShortName}/shiny/64.png`} />
+          <p>{cityName}</p>
+        </SubContainer>
+        <SubContainer>
+          <PDate>({newTimestamp})</PDate>
+          <XIcon icon={faX} onClick={() => deleteCity(cityName)}/>
+        </SubContainer>
+      </CityContainer>
+    </CustomNavLink>
+
   )
 }

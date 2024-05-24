@@ -129,6 +129,8 @@ export const getCurrentCity = async (id) => {
 
   if(docSnap.exists()) {
     return docSnap.data()
+  } else {
+    return null
   }
 }
 

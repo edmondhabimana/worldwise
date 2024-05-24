@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLoaderData, Link, useNavigate} from "react-router-dom"
+import { useLoaderData, Link, useNavigate, redirect} from "react-router-dom"
 import { getCurrentCity } from "../../firebase/config";
 import FlagImage from "../../ui/FlagImage";
 import BackButton from "../../ui/BackButton";
@@ -49,6 +49,7 @@ const RightArrowIcon = styled(FontAwesomeIcon)`
 export default function City() {
   const [ newDate, setNewDate ] = useState('')
   const currentCity = useLoaderData()
+
   const { city, countryShortName, description, tripDate } = currentCity
   const navigate = useNavigate()
 
@@ -97,5 +98,9 @@ export default function City() {
 export async function loader({params}) {
   const { id } = params
   const currentCity = await getCurrentCity(id)
-  return currentCity
+  if(currentCity === null){
+    return redirect('/app/cities')
+  } else {
+    return currentCity
+  }
 }
