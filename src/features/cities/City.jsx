@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLoaderData, Link, useNavigate, redirect} from "react-router-dom"
+import { useCities } from "../../contexts/citiesContext";
 import { getCurrentCity } from "../../firebase/config";
 import FlagImage from "../../ui/FlagImage";
 import BackButton from "../../ui/BackButton";
@@ -49,6 +50,7 @@ const RightArrowIcon = styled(FontAwesomeIcon)`
 export default function City() {
   const [ newDate, setNewDate ] = useState('')
   const currentCity = useLoaderData()
+  const { dispatch } = useCities()
 
   const { city, countryShortName, description, tripDate } = currentCity
   const navigate = useNavigate()
@@ -69,7 +71,10 @@ export default function City() {
     const [ , , date, year ] = new Date(tripDate).toString().split(' ')
 
     setNewDate(`${day}, ${month} ${date}, ${year}`)
-  },[tripDate])
+    dispatch({type: "active", payload: false})
+  },[tripDate, dispatch])
+
+
 
   return(
     <CityContainer>

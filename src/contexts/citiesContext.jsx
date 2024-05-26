@@ -17,6 +17,8 @@ const CitiesContext = createContext()
 const initialState = {
   cities: [],
   isLoading: [],
+  selectedCity: null,
+  isActive: true,
   error: ''
 }
 
@@ -28,18 +30,24 @@ function reducer(state, action) {
     case "cities/loaded":
       return {...state, isLoading: false, cities: action.payload}
 
+    case "selectedCity":
+      return {...state, selectedCity: action.payload}
+
+    case "active":
+      return {...state, isActive: action.payload}
+
     default: 
       throw new Error("Unknown action type")
   }
 }
 
 function CitiesProvider({children}) {
-  const [{ cities, isLoading, error }, dispatch] = useReducer(
+  const [{ cities, isLoading, selectedCity, isActive, error }, dispatch] = useReducer(
     reducer,
     initialState
   )
 
-  // console.log('cities',cities);
+  // console.log('isActive', isActive);
 
   useEffect(() => {
     const getCities = async () => {
@@ -61,12 +69,21 @@ function CitiesProvider({children}) {
     getCities()
   }, [])
 
+  function handleActive(id) {
+    dispatch({ type: "selectedCity", payload: id})
+    // setSelectedCity(id !== selectedCity && id)
+  }
+
   return(
     <CitiesContext.Provider
       value={{
         cities,
         isLoading,
+        handleActive,
+        selectedCity,
         error,
+        dispatch,
+        isActive
       }}
     >
       {children}

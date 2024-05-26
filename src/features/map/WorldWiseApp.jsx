@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import styled from "styled-components"
 import { Outlet, NavLink } from "react-router-dom"
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
+import { useCities } from "../../contexts/citiesContext"
 import { Button } from "../../ui/Button"
 import ChangeMapPosition from "./ChangeMapPosition"
 import userLocation  from "../../hooks/userLocation"
@@ -70,7 +71,7 @@ const CustomNav = styled(NavLink)`
   font-size: 13px;
 
   &.active {
-    background-color: #242a2e;
+    background-color: ${props => props.isactive === "true" ? "#242a2e" : ""} ;
   }
 `
 const Copyright = styled.div`
@@ -85,6 +86,7 @@ export default function WorldWiseApp() {
   const [ coord, setCoord ] = useState([51.481383, -0.131836])
   const [ year, setYear ] = useState('')
   const { handleLocation, isLoading, myPosition} = userLocation()
+  const { dispatch, isActive } = useCities()
   
 
 
@@ -104,8 +106,20 @@ export default function WorldWiseApp() {
       <DataDiv>
         <LogoImage src={logo} alt="company logo"/>
         <NavContainer>
-          <CustomNav to={'/app/cities'} >cities</CustomNav>
-          <CustomNav to={'/app/countries'} >countries</CustomNav>
+          <CustomNav 
+            to={'/app/cities'} 
+            onClick={() => dispatch({type: "selectedCity", payload: null})}
+            isactive={isActive.toString()}
+          >
+            cities
+          </CustomNav>
+          <CustomNav 
+            to={'/app/countries'} 
+            onClick={() => dispatch({type: "selectedCity", payload: null})}
+            isactive={isActive.toString()}
+          >
+            countries
+          </CustomNav>
         </NavContainer>
         <Outlet/> 
         <Copyright>

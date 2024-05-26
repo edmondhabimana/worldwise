@@ -12,7 +12,7 @@ import {action as addCity } from './features/form/FormComponent'
 import CityList from './features/cities/CityList'
 import CountryList, {loader as countriesLoader} from './features/countries/CountryList'
 import City, {loader as currentCityLoader} from './features/cities/City'
-import SelectByCountry from './features/cities/SelectByCountry'
+import SelectByCountry, {loader as citiesByCountryLoader} from './features/cities/SelectByCountry'
 import Error from './features/error/Error'
 
 
@@ -68,8 +68,10 @@ const router = createBrowserRouter([
         errorElement: <Error/>
       },
       {
-        path: '/app/countries/cities',
-        element: <SelectByCountry/>
+        path: '/app/countries/:country',
+        element: <SelectByCountry/>,
+        loader: citiesByCountryLoader,
+        errorElement: <Error/>
       }
     ]
   }

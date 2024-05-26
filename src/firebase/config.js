@@ -13,7 +13,9 @@ import { getFirestore,
          collection, 
          getDocs, 
          Timestamp, 
-         deleteDoc, 
+         deleteDoc,
+         query,
+         where, 
        } from 'firebase/firestore'
 
 
@@ -119,7 +121,7 @@ export const getCountries = async () => {
     count = 0
   }
 
-  console.log('uniqueCountries', uniqueCountries);
+  // console.log('uniqueCountries', uniqueCountries);
   return uniqueCountries
 }
 
@@ -136,4 +138,15 @@ export const getCurrentCity = async (id) => {
 
 export const deleteCity = async (id) => {
   await deleteDoc(doc(db, 'cities', `${id}`))
+}
+
+export const getCitiesBySelectedCountry = async (country) => {
+  const q = query(collection(db, "cities"), where("country", "==", country))
+  const querySnapshot = await getDocs(q)
+  const cities = []
+  querySnapshot.forEach((doc) => {
+    cities.push(doc.data())
+  })
+
+  return cities
 }
