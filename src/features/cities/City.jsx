@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLoaderData, Link, useNavigate, redirect} from "react-router-dom"
+import { useLoaderData, Link, useNavigate, redirect, useParams} from "react-router-dom"
 import { useCities } from "../../contexts/citiesContext";
 import { getCurrentCity } from "../../firebase/config";
 import FlagImage from "../../ui/FlagImage";
@@ -22,6 +22,9 @@ const CityName = styled.div`
   gap: 10px;
 `
 const VisitOn = styled.p`
+  margin-bottom: 20px;
+`
+const DescriptionP = styled.p`
   margin-bottom: 20px;
 `
 const CustomLink = styled(Link)`
@@ -50,7 +53,7 @@ const RightArrowIcon = styled(FontAwesomeIcon)`
 export default function City() {
   const [ newDate, setNewDate ] = useState('')
   const currentCity = useLoaderData()
-  const { dispatch } = useCities()
+  const { dispatch, setMapToCurrentCity } = useCities()
 
   const { city, countryShortName, description, tripDate } = currentCity
   const navigate = useNavigate()
@@ -72,9 +75,12 @@ export default function City() {
 
     setNewDate(`${day}, ${month} ${date}, ${year}`)
     dispatch({type: "active", payload: false})
+    
   },[tripDate, dispatch])
 
-
+  useEffect(() => {
+    setMapToCurrentCity(city)
+  }, [setMapToCurrentCity, city])
 
   return(
     <CityContainer>
@@ -87,6 +93,12 @@ export default function City() {
       </div>
       <Title>you went to {city} on</Title>
       <VisitOn>{newDate}</VisitOn>
+      {description && 
+        <>
+          <Title>your notes</Title>
+          <DescriptionP>{description}</DescriptionP>
+        </>
+      }
       <Title>learn more</Title>
       <CustomLink to={`https://en.wikipedia.org/wiki/${city}`} target="_blank">
         check out {city} on Wikipedia 

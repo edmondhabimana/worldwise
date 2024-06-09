@@ -82,10 +82,11 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
   return await signInWithEmailAndPassword(auth, email, password)
 }
 
-export const createCity = async (city, country, countryShortName, date, description = '') => {
+export const createCity = async (city, coordinates, country, countryShortName, date, description = '') => {
   const createdAt = Timestamp.fromDate(new Date())
   await setDoc(doc(db, "cities", `${city}`), {
     city,
+    coordinates,
     country,
     countryShortName,
     tripDate: date,
@@ -93,6 +94,8 @@ export const createCity = async (city, country, countryShortName, date, descript
     createdAt
   })
 }
+
+
 
 export const getCountries = async () => {
   const querySnapshot = await getDocs(collection(db, "cities"))

@@ -7,8 +7,8 @@ import { query,
          collection, 
          orderBy, 
          onSnapshot,
-         getDocs, 
-         limit,
+         getDoc, 
+         doc,
          where } from "firebase/firestore";
 import { db } from "../firebase/config";
 
@@ -16,7 +16,9 @@ const CitiesContext = createContext()
 
 const initialState = {
   cities: [],
-  isLoading: [],
+  coordinates: [],
+  lastLocation: {lat: 51.481383, lng: -0.131836},
+  isLoading: false,
   selectedCity: null,
   isActive: true,
   error: ''
@@ -36,25 +38,29 @@ function reducer(state, action) {
     case "active":
       return {...state, isActive: action.payload}
 
+    case "coordinates/loaded":
+      return {...state, coordinates: [...action.payload]}
+
+    case "lastLocation":
+      return {...state, lastLocation: action.payload}
+
     default: 
       throw new Error("Unknown action type")
   }
 }
 
 function CitiesProvider({children}) {
-  const [{ cities, isLoading, selectedCity, isActive, error }, dispatch] = useReducer(
+  const [{ cities, coordinates, lastLocation, isLoading, selectedCity, isActive, error }, dispatch] = useReducer(
     reducer,
     initialState
   )
 
-  // console.log('isActive', isActive);
+  console.log('lastLocation', lastLocation);
 
   useEffect(() => {
     const getCities = async () => {
       dispatch({type: "loading"})
-
       const q = query(collection(db, 'cities'), orderBy('createdAt', 'desc'))
-    
       onSnapshot(q, (querySnapshot) => {
         const getCities = []
         querySnapshot.forEach((doc) => {
@@ -69,6 +75,53 @@ function CitiesProvider({children}) {
     getCities()
   }, [])
 
+  useEffect(() => {
+    const getLastLocation = async () => {
+      const q = query(collection(db, 'cities'), orderBy('createdAt', 'desc'))
+      onSnapshot(q, (querySnapshot) => {
+        const allLocations = []
+        querySnapshot.forEach((doc) => {
+          // console.log(doc.data());
+          allLocations.push(doc.data().coordinates)
+        })
+        dispatch({ type: "lastLocation", payload: allLocations[0]})
+      })
+    }
+
+   getLastLocation()
+  }, [])
+
+  const setMapToCurrentCity = useCallback(
+    async function setMapToCurrentCity(city) {
+      const docRef = doc(db, "cities", city)
+      const docSnap = await getDoc(docRef)
+    
+      if(docSnap.exists()) {
+        dispatch({ type: "lastLocation", payload: docSnap.data().coordinates})
+      }
+    },[]
+  )
+
+
+  useEffect(() => {
+    const getAllCitiesCoordinates = async () => {
+      const q = query(collection(db, "cities"))
+      onSnapshot(q, (querySnapshot) => {
+        const locations = []
+        querySnapshot.forEach((doc) => {
+          locations.push({
+            coordinates: doc.data().coordinates,
+            city: doc.data().city,
+            countryShortName: doc.data().countryShortName
+          })
+        })
+        dispatch({ type: "coordinates/loaded", payload: locations})
+      })
+    }
+
+    getAllCitiesCoordinates()
+  },[])
+
   function handleActive(id) {
     dispatch({ type: "selectedCity", payload: id})
     // setSelectedCity(id !== selectedCity && id)
@@ -78,8 +131,11 @@ function CitiesProvider({children}) {
     <CitiesContext.Provider
       value={{
         cities,
+        coordinates,
+        lastLocation,
         isLoading,
         handleActive,
+        setMapToCurrentCity,
         selectedCity,
         error,
         dispatch,

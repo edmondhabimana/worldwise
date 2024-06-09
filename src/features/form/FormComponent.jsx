@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, redirect, useLoaderData, useNavigate, useNavigation } from "react-router-dom"
+import { Form, redirect, useLoaderData, useNavigate, useNavigation, useParams } from "react-router-dom"
 import styled from "styled-components";
 import { reverseGeo } from "../../service/reverseGeo";
 import { createCity } from "../../firebase/config";
@@ -96,6 +96,8 @@ export default function FormComponent() {
   // console.log('location data',locationData);
   const navigate = useNavigate()
   const navigation = useNavigation()
+  const {lat, lng} = useParams()
+  // console.log('lat', lat, 'lng', lng);
   const isSubmitting = navigation.state === 'submitting'
 
   function handleNavigation() {
@@ -133,6 +135,7 @@ export default function FormComponent() {
             <input type="hidden" name="country" value={country}/>
             <FlagImage src={`https://flagsapi.com/${countryAbbreviation}/shiny/64.png`} />
             <input type="hidden" name="countryAbbreviation" value={countryAbbreviation}/>
+            <input type="hidden" name="coordinates" value={JSON.stringify({lat, lng})}/>
           </CityNameContainer>
           <DateContainer>
             <FormLabel>When did you go to {city}?</FormLabel>
@@ -177,13 +180,20 @@ export async function loader({params}) {
 
 export async function action({request}) {
   const formData = await request.formData()
+  const results = Object.fromEntries(formData)
+  const locationData = {
+    ...results,
+    coordinates: JSON.parse(results.coordinates)
+  }
+  console.log('location data',locationData);
   const { city, 
           country, 
           countryAbbreviation, 
           date, 
-          description
-        } = Object.fromEntries(formData)
-  await createCity(city, country, countryAbbreviation, date, description)
+          description,
+          coordinates
+        } = locationData
+  await createCity(city, coordinates, country, countryAbbreviation, date, description)
   // console.log(data);
   return redirect('/app/cities')
 }
