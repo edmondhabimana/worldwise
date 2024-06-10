@@ -5,6 +5,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
+  signOut
 } from 'firebase/auth'
 import { getFirestore, 
          doc, 
@@ -80,6 +81,10 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
   if(!email || !password) return
 
   return await signInWithEmailAndPassword(auth, email, password)
+}
+
+export const signoutUser = async () => {
+  await signOut(auth)
 }
 
 export const createCity = async (city, coordinates, country, countryShortName, date, description = '') => {

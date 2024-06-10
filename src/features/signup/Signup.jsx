@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useAuth } from "../../contexts/AuthContext"
 import { Form } from "../../ui/Form"
 import { Label } from "../../ui/Label"
 import { Input } from "../../ui/Input"
@@ -27,6 +28,7 @@ export default function Signup() {
   const [ userExistError, setUserExistError ] = useState('')
   const { displayName, email, password, confirmPassword } = formField
   // console.log(displayName);
+  const { dispatch } = useAuth()
 
   const resetFormFields = () => {
     setFormFields(defaultFormFields)
@@ -73,6 +75,9 @@ export default function Signup() {
       );
 
       await createUserDocumentFromAuth(user, {displayName})
+
+      dispatch({type: 'login', payload: user})
+      
       setIsPending(false)
       resetFormFields()
     } catch (error) {

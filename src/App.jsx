@@ -7,6 +7,7 @@ import Pricing from './features/pricing/Pricing'
 import Product from './features/product/Product'
 import Login from './features/login/Login'
 import WorldWiseApp from './features/map/WorldWiseApp'
+import ProtectedRoutes from './features/protectedRoutes/ProtectedRoutes'
 import Form, { loader as formLoader } from './features/form/FormComponent'
 import {action as addCity } from './features/form/FormComponent'
 import CityList from './features/cities/CityList'
@@ -40,7 +41,11 @@ const router = createBrowserRouter([
     ],
   },
   {
-    element: <WorldWiseApp/>,
+    element: (
+      <ProtectedRoutes>
+        <WorldWiseApp/>
+      </ProtectedRoutes>
+    ),
     errorElement: <Error/>,
 
     children: [

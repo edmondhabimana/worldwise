@@ -55,7 +55,7 @@ function CitiesProvider({children}) {
     initialState
   )
 
-  console.log('lastLocation', lastLocation);
+  // console.log('lastLocation', lastLocation);
 
   useEffect(() => {
     const getCities = async () => {

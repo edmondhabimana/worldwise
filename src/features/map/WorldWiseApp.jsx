@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react"
 import styled from "styled-components"
+import styles from "./WorldWiseApp.module.css"
 import { Outlet, NavLink } from "react-router-dom"
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
 import { useCities } from "../../contexts/citiesContext"
+import { useAuth } from "../../contexts/AuthContext"
+import { useLogout } from "../../hooks/useLogout"
 import { Button } from "../../ui/Button"
 import ChangeMapPosition from "./ChangeMapPosition"
 import userLocation  from "../../hooks/userLocation"
 import DetectClick from "./DetectClick"
 import logo from '../../assets/logo.png'
+import FlagImage from '../../ui/FlagImage'
 
 const WorldWiseAppContainer = styled.div`
   height: 100vh;
@@ -74,6 +78,40 @@ const CustomNav = styled(NavLink)`
     background-color: ${props => props.isactive === "true" ? "#242a2e" : ""} ;
   }
 `
+const Profile = styled.div`
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  z-index: 10;
+  color: white;
+  background-color: #2d3438;
+  padding: 10px;
+  border-radius: 8px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`
+const ProfileName = styled.p`
+  font-weight: 600;
+`
+const ProfileButton = styled.button`
+  padding: 8px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  background-color: #42484c;
+  color: white;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+  /* font-weight: 500; */
+`
+const User = styled.div`
+  background-color: green;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+`
 const Copyright = styled.div`
   padding-bottom: 10px;
   color: #9a9b9d;
@@ -86,70 +124,98 @@ export default function WorldWiseApp() {
   const [ coord, setCoord ] = useState([51.481383, -0.131836])
   const [ year, setYear ] = useState('')
   const { handleLocation, isLoading, myPosition} = userLocation()
-  const { dispatch, isActive } = useCities()
+  const { dispatch, isActive, coordinates, lastLocation } = useCities()
+  const { logout } = useLogout()
+  const { user, authIsReady } = useAuth()
+  const { lat, lng } = lastLocation
+  // console.log('auth is ready', authIsReady);
+  // console.log('user',user);
+  // console.log('coord', coord);
   
 
 
   useEffect(function() {
-    myPosition  ?
-      setCoord([myPosition.lat, myPosition.lng]) :
-      setCoord([51.481383, -0.131836])
+    myPosition  &&
+      setCoord([myPosition.lat, myPosition.lng])
   }, [myPosition])
 
   useEffect(() => {
     const now = new Date()
     setYear(now.toString().split(' ')[3]);
-  }, [])
+    setCoord([lat, lng])
+  }, [lat, lng])
 
   return(
-    <WorldWiseAppContainer>
-      <DataDiv>
-        <LogoImage src={logo} alt="company logo"/>
-        <NavContainer>
-          <CustomNav 
-            to={'/app/cities'} 
-            onClick={() => dispatch({type: "selectedCity", payload: null})}
-            isactive={isActive.toString()}
-          >
-            cities
-          </CustomNav>
-          <CustomNav 
-            to={'/app/countries'} 
-            onClick={() => dispatch({type: "selectedCity", payload: null})}
-            isactive={isActive.toString()}
-          >
-            countries
-          </CustomNav>
-        </NavContainer>
-        <Outlet/> 
-        <Copyright>
-          <p>Copyright {year} by WorldWise Inc.</p>
-        </Copyright> 
-      </DataDiv>
-      <DivWithMap>
-        {!myPosition && 
-          <GetUserLocationButton onClick={() => handleLocation()}>
-            {isLoading ? 'LOADING...' : 'use your position'}
-          </GetUserLocationButton>
-        }
-        <Map center={coord} zoom={6} scrollWheelZoom={true}>
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            
-          />
-          { myPosition && 
-              <Marker position={coord}>
-                <Popup>
-                  A pretty CSS3 popup. <br /> Easily customizable.
-                </Popup>
-              </Marker>
-          }
-          <DetectClick/>
-          <ChangeMapPosition position={coord}/>
-        </Map>
-      </DivWithMap>
-    </WorldWiseAppContainer>
+    <>
+      {authIsReady &&
+        <WorldWiseAppContainer>
+          <DataDiv>
+            <LogoImage src={logo} alt="company logo"/>
+            <NavContainer>
+              <CustomNav 
+                to={'/app/cities'} 
+                onClick={() => dispatch({type: "selectedCity", payload: null})}
+                isactive={isActive.toString()}
+              >
+                cities
+              </CustomNav>
+              <CustomNav 
+                to={'/app/countries'} 
+                onClick={() => dispatch({type: "selectedCity", payload: null})}
+                isactive={isActive.toString()}
+              >
+                countries
+              </CustomNav>
+            </NavContainer>
+            <Outlet/> 
+            <Copyright>
+              <p>Copyright {year} by WorldWise Inc.</p>
+            </Copyright> 
+          </DataDiv>
+          <DivWithMap>
+            <Profile>
+              <User></User>
+              <ProfileName>Welcome, {user.displayName}</ProfileName>
+              <ProfileButton onClick={() => logout()}>logout</ProfileButton>
+            </Profile>
+            {!myPosition && 
+              <GetUserLocationButton onClick={() => handleLocation()}>
+                {isLoading ? 'LOADING...' : 'use your position'}
+              </GetUserLocationButton>
+            }
+            <Map center={coord} zoom={6} scrollWheelZoom={true}>
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                
+              />
+              { myPosition && 
+                <>
+                  <Marker position={[myPosition.lat, myPosition.lng]}>
+                    <Popup>
+                      A pretty CSS3 popup. <br /> Easily customizable.
+                    </Popup>
+                  </Marker>
+                </>
+              }
+              {
+                coordinates.map((position, index) => (
+                <Marker position={position.coordinates} key={index}>
+                  <Popup className={styles.popup}>
+                    <FlagImage src={`https://flagsapi.com/${position.countryShortName}/shiny/64.png`} />
+                    <p>{position.city}</p>
+                  </Popup>
+                </Marker>
+                ))
+              }
+              <DetectClick/>
+              <ChangeMapPosition position={coord}/>
+            </Map>
+          </DivWithMap>
+        </WorldWiseAppContainer>
+      }
+    </>
+
   )
 }
 

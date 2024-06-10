@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react"
-import { useOutletContext } from "react-router-dom"
+import { useNavigate, useOutletContext } from "react-router-dom"
+import { createUserDocumentFromAuth, 
+         signInWithGooglePopup,
+         signInAuthUserWithEmailAndPassword } from "../../firebase/config"
+import useScreenSize from "../../hooks/useScreenSize"
+import { useAuth } from "../../contexts/AuthContext"
 import { Button } from "../../ui/Button"
 import Container from "../../ui/Container"
 import { Error } from "../../ui/Error"
@@ -11,10 +16,7 @@ import styled from "styled-components"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faGoogle } from "@fortawesome/free-brands-svg-icons"
 import { faArrowRightLong, faSpinner } from "@fortawesome/pro-light-svg-icons"
-import { createUserDocumentFromAuth, 
-         signInWithGooglePopup,
-         signInAuthUserWithEmailAndPassword } from "../../firebase/config"
-import useScreenSize from "../../hooks/useScreenSize"
+
 
 const defaultFormFields = {
   email: '',
@@ -80,10 +82,11 @@ export default function Login() {
   const [ loginPending, setLoginPending ] = useState(false)
   const [ googleLoginPending, setGoogleLoginPending ] = useState(false)
   const { email, password } = formFields;
-
+  const { dispatch } = useAuth()
+  const navigate = useNavigate()
   const [ setBackgroundImage ] = useOutletContext()
   const { width } = useScreenSize()
-  console.log(width);
+  // console.log(width);
 
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
@@ -94,6 +97,8 @@ export default function Login() {
     const { user } = await signInWithGooglePopup()
     setGoogleLoginPending(false)
     createUserDocumentFromAuth(user)
+    dispatch({ type: 'login', payload: user })
+    navigate('/app/cities')
   }
 
   const handleSubmit = async (event) => {
@@ -106,6 +111,7 @@ export default function Login() {
 
     try {
      const user = await signInAuthUserWithEmailAndPassword(email, password);
+     dispatch({ type: 'login', payload: user })
      setLoginPending(false)
      console.log(user);
       resetFormFields();
