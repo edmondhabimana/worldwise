@@ -5,7 +5,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
-  signOut
+  signOut,
+  updateProfile
 } from 'firebase/auth'
 import { getFirestore, 
          doc, 
@@ -69,6 +70,12 @@ export const createUserDocumentFromAuth = async (
  }
 
  return userDocRef
+}
+
+export const updateUserDisplayNameOnProfileObject = async (name) => {
+  await updateProfile(auth.currentUser, {
+    displayName: name
+  })
 }
 
 export const createAuthUserWithEmailAndPassword = async (email, password) => {

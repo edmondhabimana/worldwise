@@ -110,10 +110,11 @@ export default function Login() {
     setLoginPending(true)
 
     try {
-     const user = await signInAuthUserWithEmailAndPassword(email, password);
+     const { user } = await signInAuthUserWithEmailAndPassword(email, password);
      dispatch({ type: 'login', payload: user })
      setLoginPending(false)
-     console.log(user);
+     navigate('/app/cities')
+    //  console.log(user);
       resetFormFields();
     } catch (error) {
 

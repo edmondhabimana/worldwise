@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { useAuth } from "../../contexts/AuthContext"
 import { Form } from "../../ui/Form"
 import { Label } from "../../ui/Label"
@@ -6,7 +7,8 @@ import { Input } from "../../ui/Input"
 import { Button } from "../../ui/Button"
 import { Error } from "../../ui/Error"
 import { createAuthUserWithEmailAndPassword, 
-         createUserDocumentFromAuth } from "../../firebase/config" 
+         createUserDocumentFromAuth,
+         updateUserDisplayNameOnProfileObject } from "../../firebase/config" 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSpinner } from "@fortawesome/pro-light-svg-icons"
 
@@ -28,6 +30,7 @@ export default function Signup() {
   const [ userExistError, setUserExistError ] = useState('')
   const { displayName, email, password, confirmPassword } = formField
   // console.log(displayName);
+  const navigate = useNavigate()
   const { dispatch } = useAuth()
 
   const resetFormFields = () => {
@@ -75,11 +78,13 @@ export default function Signup() {
       );
 
       await createUserDocumentFromAuth(user, {displayName})
+      await updateUserDisplayNameOnProfileObject(displayName)
 
       dispatch({type: 'login', payload: user})
       
       setIsPending(false)
       resetFormFields()
+      navigate('/app/cities')
     } catch (error) {
       if(error.code === 'auth/email-already-in-use') {
         setUserExistError('Cannot create user, email already exist')
