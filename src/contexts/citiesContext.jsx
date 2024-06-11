@@ -42,7 +42,7 @@ function reducer(state, action) {
       return {...state, coordinates: [...action.payload]}
 
     case "lastLocation":
-      return {...state, lastLocation: action.payload}
+      return {...state, lastLocation: action.payload === undefined ? state.lastLocation : action.payload}
 
     default: 
       throw new Error("Unknown action type")
@@ -55,25 +55,23 @@ function CitiesProvider({children}) {
     initialState
   )
 
-  // console.log('lastLocation', lastLocation);
+  console.log('lastLocation', lastLocation);
 
-  useEffect(() => {
-    const getCities = async () => {
+  const getCities = useCallback(
+    async function getCities(userid) {
       dispatch({type: "loading"})
-      const q = query(collection(db, 'cities'), orderBy('createdAt', 'desc'))
+      const q = query(collection(db, 'cities'), orderBy('createdAt', 'desc'), where("userID", "==", userid))
       onSnapshot(q, (querySnapshot) => {
-        const getCities = []
+        const allCities = []
         querySnapshot.forEach((doc) => {
-          // console.log(doc.data());
-          getCities.push({...doc.data()})
+          allCities.push({...doc.data()})
         })
-        dispatch({ type: "cities/loaded", payload: getCities})
+        dispatch({ type: "cities/loaded", payload: allCities})
       })
     
-    }
-
-    getCities()
-  }, [])
+    }, 
+    []
+  )
 
   useEffect(() => {
     const getLastLocation = async () => {
@@ -139,7 +137,8 @@ function CitiesProvider({children}) {
         selectedCity,
         error,
         dispatch,
-        isActive
+        isActive,
+        getCities
       }}
     >
       {children}

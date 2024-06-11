@@ -10,11 +10,11 @@ import 'react-datepicker/dist/react-datepicker.css'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <StyleSheetManager shouldForwardProp={() => true}>
-      <CitiesProvider>
-        <AuthProvider>
+      <AuthProvider>
+        <CitiesProvider>
           <App />
-        </AuthProvider>
-      </CitiesProvider>
+        </CitiesProvider>
+      </AuthProvider>
     </StyleSheetManager>
   </React.StrictMode>,
 )

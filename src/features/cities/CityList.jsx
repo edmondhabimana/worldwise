@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import styled from "styled-components"
 import { useCities } from "../../contexts/citiesContext";
+import { useAuth } from "../../contexts/AuthContext";
 import CityItem from "./CityItem";
 import CitiesContainer from "../../ui/CitiesContainer"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,12 +16,16 @@ const LoadingIcon = styled(FontAwesomeIcon)`
 `
 
 export default function CityList() {
-  const { cities, isLoading } = useCities()
-  const { dispatch } = useCities()
+  const { cities, isLoading, getCities, dispatch } = useCities()
+  const { user } = useAuth()
   
   useEffect(() => {
     dispatch({type: "active", payload: true})
   }, [dispatch])
+
+  useEffect(() => {
+    getCities(user.uid)
+  }, [getCities, user.uid])
 
   return(
     <CitiesContainer>

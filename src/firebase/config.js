@@ -94,8 +94,10 @@ export const signoutUser = async () => {
   await signOut(auth)
 }
 
-export const createCity = async (city, coordinates, country, countryShortName, date, description = '') => {
+export const createCity = async (city, coordinates, country, countryShortName, date, description = '', userID) => {
+
   const createdAt = Timestamp.fromDate(new Date())
+
   await setDoc(doc(db, "cities", `${city}`), {
     city,
     coordinates,
@@ -103,11 +105,10 @@ export const createCity = async (city, coordinates, country, countryShortName, d
     countryShortName,
     tripDate: date,
     description,
-    createdAt
+    createdAt,
+    userID
   })
 }
-
-
 
 export const getCountries = async () => {
   const querySnapshot = await getDocs(collection(db, "cities"))

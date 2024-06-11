@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Form, redirect, useLoaderData, useNavigate, useNavigation, useParams } from "react-router-dom"
 import styled from "styled-components";
+import { useAuth } from "../../contexts/AuthContext";
 import { reverseGeo } from "../../service/reverseGeo";
 import { createCity } from "../../firebase/config";
 import ReactDatePicker from "react-datepicker";
@@ -97,6 +98,7 @@ export default function FormComponent() {
   const navigate = useNavigate()
   const navigation = useNavigation()
   const {lat, lng} = useParams()
+  const { user } = useAuth()
   // console.log('lat', lat, 'lng', lng);
   const isSubmitting = navigation.state === 'submitting'
 
@@ -135,6 +137,7 @@ export default function FormComponent() {
             <input type="hidden" name="country" value={country}/>
             <FlagImage src={`https://flagsapi.com/${countryAbbreviation}/shiny/64.png`} />
             <input type="hidden" name="countryAbbreviation" value={countryAbbreviation}/>
+            <input type="hidden" name="userID" value={user.uid}/>
             <input type="hidden" name="coordinates" value={JSON.stringify({lat, lng})}/>
           </CityNameContainer>
           <DateContainer>
@@ -191,9 +194,10 @@ export async function action({request}) {
           countryAbbreviation, 
           date, 
           description,
-          coordinates
+          coordinates,
+          userID
         } = locationData
-  await createCity(city, coordinates, country, countryAbbreviation, date, description)
+  await createCity(city, coordinates, country, countryAbbreviation, date, description, userID)
   // console.log(data);
   return redirect('/app/cities')
 }
