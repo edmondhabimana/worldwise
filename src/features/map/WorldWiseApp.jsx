@@ -6,17 +6,21 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
 import { useCities } from "../../contexts/citiesContext"
 import { useAuth } from "../../contexts/AuthContext"
 import { useLogout } from "../../hooks/useLogout"
+import ProfileThumbnail from "../profileThumbnail/ProfileThumbnail"
 import { Button } from "../../ui/Button"
 import ChangeMapPosition from "./ChangeMapPosition"
 import userLocation  from "../../hooks/userLocation"
 import DetectClick from "./DetectClick"
 import logo from '../../assets/logo.png'
 import FlagImage from '../../ui/FlagImage'
+import profileImage from '../../assets/profile-image-placeholder.webp'
 
 const WorldWiseAppContainer = styled.div`
   height: 100vh;
   width: 100vw;
   padding: 25px;
+  position: relative;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -112,6 +116,10 @@ const User = styled.div`
   height: 50px;
   border-radius: 50%;
 `
+const ProfileImage = styled.img`
+  width: 50px;
+  border-radius: 50%;
+`
 const Copyright = styled.div`
   padding-bottom: 10px;
   color: #9a9b9d;
@@ -123,14 +131,20 @@ const Copyright = styled.div`
 export default function WorldWiseApp() {
   const [ coord, setCoord ] = useState([51.481383, -0.131836])
   const [ year, setYear ] = useState('')
+  const [showUploadPopup, setShowUploadPopup] = useState(false)
+  const [profileImageExist, setProfileImageExist] = useState(false)
   const { handleLocation, isLoading, myPosition} = userLocation()
   const { dispatch, isActive, coordinates, lastLocation } = useCities()
   const { logout } = useLogout()
-  const { user, authIsReady } = useAuth()
+  const { authIsReady, userDocument, checkIfImageFileExist } = useAuth()
+  // console.log('user document',userDocument);
+  const { displayName, photoURL } = userDocument
   const { lat, lng } = lastLocation
   // console.log('auth is ready', authIsReady);
-  // console.log('user',user);
+  // console.log('user photo',user);
   // console.log('coord', coord);
+
+  // console.log('userResults', userResults);
   
 
 
@@ -144,6 +158,16 @@ export default function WorldWiseApp() {
     setYear(now.toString().split(' ')[3]);
     setCoord([lat, lng])
   }, [lat, lng])
+
+  useEffect(() => {
+    async function checkImage () {
+     const results =  await checkIfImageFileExist()
+     setProfileImageExist(results[0])
+     console.log(results);
+    }
+    checkImage()
+  }, [checkIfImageFileExist])
+
 
   return(
     <>
@@ -174,10 +198,16 @@ export default function WorldWiseApp() {
           </DataDiv>
           <DivWithMap>
             <Profile>
-              <User></User>
-              <ProfileName>Welcome, {user.displayName}</ProfileName>
+              <User onClick={() => setShowUploadPopup(true)}>
+                <ProfileImage src={profileImageExist ? photoURL : profileImage} />
+              </User>
+              <ProfileName>Welcome, {displayName}</ProfileName>
               <ProfileButton onClick={() => logout()}>logout</ProfileButton>
             </Profile>
+            <ProfileThumbnail 
+              showUploadPopup={showUploadPopup}
+              setShowUploadPopup={setShowUploadPopup}
+            />
             {!myPosition && 
               <GetUserLocationButton onClick={() => handleLocation()}>
                 {isLoading ? 'LOADING...' : 'use your position'}

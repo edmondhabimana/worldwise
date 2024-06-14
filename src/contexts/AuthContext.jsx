@@ -1,6 +1,9 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
+import { createContext, useCallback, useContext, useEffect, useReducer } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase/config";
+import { getDownloadURL, ref} from "firebase/storage"
+import { doc } from "firebase/firestore";
+import { auth, db, storage } from "../firebase/config";
+import { onSnapshot } from "firebase/firestore";
 
 export const AuthContext = createContext()
 
@@ -12,6 +15,8 @@ export const reducer = ( state, action ) => {
       return { ...state, user: null }
     case "auth_is_ready":
       return { ...state, user: action.payload, authIsReady: action.payload === null ? false : true}
+    case "user_info":
+      return { ...state, userDocument: action.payload}
     default:
       return state
   }
@@ -19,19 +24,34 @@ export const reducer = ( state, action ) => {
 
 
 const AuthProvider = ({children}) => {
-  const [ { user, authIsReady }, dispatch ] = useReducer(reducer, {
+  const [ { user, authIsReady, userDocument }, dispatch ] = useReducer(reducer, {
     user: null,
-    authIsReady: false
+    authIsReady: false,
+    userDocument: null
   })
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       dispatch({ type: 'auth_is_ready', payload: user})
+      onSnapshot(doc(db, "users", user.uid), (doc) => {
+        console.log(doc.data());
+        dispatch({ type: 'user_info', payload: doc.data()})
+      })
     })
   }, [])
 
+  const checkIfImageFileExist = async () => {
+    return await getDownloadURL(
+    ref(storage, userDocument.photoURL)
+    ).then((url) => {
+      return [true, url]
+    }).catch((error) => {
+      return [false, error.message]
+    })
+  }
+
   return(
-    <AuthContext.Provider value={{ user, authIsReady, dispatch}}>
+    <AuthContext.Provider value={{ user, authIsReady, dispatch, userDocument, checkIfImageFileExist}}>
       { children }
     </AuthContext.Provider>
   )

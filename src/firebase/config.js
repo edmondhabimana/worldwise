@@ -8,6 +8,7 @@ import {
   signOut,
   updateProfile
 } from 'firebase/auth'
+
 import { getFirestore, 
          doc, 
          getDoc, 
@@ -17,9 +18,12 @@ import { getFirestore,
          Timestamp, 
          deleteDoc,
          query,
-         where, 
+         where,
+         updateDoc,
+         onSnapshot, 
        } from 'firebase/firestore'
 
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
 
 const firebaseConfig = {
   apiKey: "AIzaSyA2vlHYWJPT2BGOej1kyYUK9AxQwII_nCc",
@@ -42,6 +46,8 @@ export const auth = getAuth();
 export const signInWithGooglePopup = () => signInWithPopup(auth, provider)
 
 export const db = getFirestore(firebaseApp);
+
+export const storage = getStorage()
 
 export const createUserDocumentFromAuth = async (
   userAuth, 
@@ -93,6 +99,21 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
 export const signoutUser = async () => {
   await signOut(auth)
 }
+
+export const uploadUserPicture = async (thumbnail) => {
+  console.log(thumbnail);
+  const uploadPath = ref(storage, `thumbnails/${auth.currentUser.uid}/${thumbnail.name}`)
+  await uploadBytes(uploadPath, thumbnail)
+  const imgURL = await getDownloadURL(uploadPath)
+  const usersRef = doc(db, "users", auth.currentUser.uid)
+  await updateDoc(usersRef, {
+    photoURL: imgURL
+  })
+  // await updateProfile(auth.currentUser, {
+  //   photoURL: imgURL
+  // })
+}
+
 
 export const createCity = async (city, coordinates, country, countryShortName, date, description = '', userID) => {
 

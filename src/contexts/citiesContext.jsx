@@ -55,7 +55,7 @@ function CitiesProvider({children}) {
     initialState
   )
 
-  console.log('lastLocation', lastLocation);
+  // console.log('lastLocation', lastLocation);
 
   const getCities = useCallback(
     async function getCities(userid) {
