@@ -118,6 +118,7 @@ const User = styled.div`
 `
 const ProfileImage = styled.img`
   width: 50px;
+  height: 50px;
   border-radius: 50%;
 `
 const Copyright = styled.div`
@@ -136,11 +137,12 @@ export default function WorldWiseApp() {
   const { handleLocation, isLoading, myPosition} = userLocation()
   const { dispatch, isActive, coordinates, lastLocation } = useCities()
   const { logout } = useLogout()
-  const { authIsReady, userDocument, checkIfImageFileExist } = useAuth()
-  // console.log('user document',userDocument);
-  const { displayName, photoURL } = userDocument
+  const { userDocument, checkIfImageFileExist } = useAuth()
+  // const { userDocument } = useUserDocument(user)
+  // console.log('user', user);
+  console.log('user document',userDocument);
+  // const { displayName, photoURL } = userDocument
   const { lat, lng } = lastLocation
-  // console.log('auth is ready', authIsReady);
   // console.log('user photo',user);
   // console.log('coord', coord);
 
@@ -160,18 +162,21 @@ export default function WorldWiseApp() {
   }, [lat, lng])
 
   useEffect(() => {
-    async function checkImage () {
+    if(userDocument === null) return
+
+    async function checkImage() {
      const results =  await checkIfImageFileExist()
-     setProfileImageExist(results[0])
-     console.log(results);
+ 
+      setProfileImageExist(results[0])
+     
     }
     checkImage()
-  }, [checkIfImageFileExist])
+  }, [checkIfImageFileExist, userDocument])
 
 
   return(
     <>
-      {authIsReady &&
+      {userDocument !== null &&
         <WorldWiseAppContainer>
           <DataDiv>
             <LogoImage src={logo} alt="company logo"/>
@@ -199,9 +204,9 @@ export default function WorldWiseApp() {
           <DivWithMap>
             <Profile>
               <User onClick={() => setShowUploadPopup(true)}>
-                <ProfileImage src={profileImageExist ? photoURL : profileImage} />
+                <ProfileImage src={profileImageExist ? userDocument.photoURL : profileImage} />
               </User>
-              <ProfileName>Welcome, {displayName}</ProfileName>
+              <ProfileName>Welcome, {userDocument.displayName}</ProfileName>
               <ProfileButton onClick={() => logout()}>logout</ProfileButton>
             </Profile>
             <ProfileThumbnail 

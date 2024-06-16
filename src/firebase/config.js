@@ -101,6 +101,7 @@ export const signoutUser = async () => {
 }
 
 export const uploadUserPicture = async (thumbnail) => {
+  if (auth.currentUser === null) return
   console.log(thumbnail);
   const uploadPath = ref(storage, `thumbnails/${auth.currentUser.uid}/${thumbnail.name}`)
   await uploadBytes(uploadPath, thumbnail)

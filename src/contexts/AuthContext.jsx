@@ -33,14 +33,23 @@ const AuthProvider = ({children}) => {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       dispatch({ type: 'auth_is_ready', payload: user})
+
+      if(user === null) return
+
       onSnapshot(doc(db, "users", user.uid), (doc) => {
-        console.log(doc.data());
+        // console.log(doc.data());
         dispatch({ type: 'user_info', payload: doc.data()})
       })
     })
   }, [])
 
+  // useEffect(() => {
+
+  // }, [user.uid])
+
   const checkIfImageFileExist = async () => {
+    if(userDocument === null) return
+
     return await getDownloadURL(
     ref(storage, userDocument.photoURL)
     ).then((url) => {
